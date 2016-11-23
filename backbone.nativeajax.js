@@ -43,10 +43,19 @@
         if (xhr.readyState !== 4) return;
 
         var status = xhr.status;
-        var data = getData(options.headers && options.headers.Accept, xhr);
+        var data, responseContentError;
+        // if JSON parsing fails, store error for later
+        try {
+          data = getData(options.headers && options.headers.Accept, xhr);
+        } catch (e) {
+          responseContentError = e;
+        }
 
         // Check for validity.
-        if (isValid(xhr)) {
+        if (responseContentError) {
+          if (options.error) options.error(xhr, status, responseContentError);
+          if (reject) reject(xhr);
+        } else if (isValid(xhr)) {
           if (options.success) options.success(data);
           if (resolve) resolve(data);
         } else {
