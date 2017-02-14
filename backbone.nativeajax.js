@@ -93,6 +93,11 @@
         options.headers['Content-Type'] = options.contentType;
       }
 
+      if (options.cache === false) {
+        var sep = (options.url.indexOf('?') === -1) ? '?' : '&';
+        options.url += sep + "_=" + Date.now();
+      }
+
       // Stringify GET query params.
       if (options.type === 'GET' && typeof options.data === 'object') {
         var query = '';
